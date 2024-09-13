@@ -292,7 +292,7 @@ class cuda_matrix {
                 sizeof(int)  * nnz +
                 sizeof(real) * nnz;
         }
-    private:
+    public:
         size_t nrows, ncols, nnz;
 
         cusparseHandle_t handle;
