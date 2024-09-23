@@ -132,8 +132,13 @@ struct plain_aggregates {
             for(ptrdiff_t j = A.ptr[i], e = A.ptr[i+1]; j < e; ++j) {
                 ptrdiff_t c = A.col[j];
                 value_type v = A.val[j];
+                if constexpr(std::is_same_v<std::complex<float>, scalar_type> || std::is_same_v<std::complex<double>, scalar_type>){
 
-                strong_connection[j] = (c != i) && (eps_dia_i * (*dia)[c] < v * v);
+                    strong_connection[j] = (c != i) && (abs(eps_dia_i * (*dia)[c]) < real(v * conj(v)));
+                }else{
+                    strong_connection[j] = (c != i) && (eps_dia_i * (*dia)[c] < v * v);
+                }
+            
             }
         }
 

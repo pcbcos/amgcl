@@ -447,7 +447,9 @@ template <typename real, class DirectSolver = solver::cuda_skyline_lu<real> >
 struct cuda {
         static_assert(
                 std::is_same<real, float>::value ||
-                std::is_same<real, double>::value,
+                std::is_same<real, double>::value||
+                std::is_same<real, std::complex<float>>::value ||
+                std::is_same<real, std::complex<double>>::value,
                 "Unsupported value type for cuda backend"
                 );
 
@@ -665,8 +667,8 @@ struct axpby_impl<
         __host__ __device__ void operator()( Tuple t ) const {
             using thrust::get;
 
-            if (b)
-                get<1>(t) = a * get<0>(t) + b * get<1>(t);
+            if (b!=B{})
+                get<1>(t) = a * get<0>(t) + static_cast<V>(b) * get<1>(t);
             else
                 get<1>(t) = a * get<0>(t);
         }
@@ -710,10 +712,10 @@ struct axpbypcz_impl<
         __host__ __device__ void operator()( Tuple t ) const {
             using thrust::get;
 
-            if (c)
-                get<2>(t) = a * get<0>(t) + b * get<1>(t) + c * get<2>(t);
+            if (c!=C{})
+                get<2>(t) = a * get<0>(t) + static_cast<V>(b) * get<1>(t) + c * get<2>(t);
             else
-                get<2>(t) = a * get<0>(t) + b * get<1>(t);
+                get<2>(t) = a * get<0>(t) + static_cast<V>(b) * get<1>(t);
         }
     };
 
@@ -757,7 +759,7 @@ struct vmul_impl<
             using thrust::get;
 
             if (b)
-                get<2>(t) = a * get<0>(t) * get<1>(t) + b * get<2>(t);
+                get<2>(t) = a * get<0>(t) * get<1>(t) + static_cast<V>(b) * get<2>(t);
             else
                 get<2>(t) = a * get<0>(t) * get<1>(t);
         }

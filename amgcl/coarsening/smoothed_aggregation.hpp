@@ -210,7 +210,7 @@ struct smoothed_aggregation {
                     if (ca != i && !aggr.strong_connection[ja]) continue;
 
                     value_type va = (ca == i)
-                        ? static_cast<value_type>(static_cast<scalar_type>(1 - omega) * math::identity<value_type>())
+                        ? static_cast<value_type>(static_cast<scalar_type>(static_cast<scalar_type>(1.0) - omega) * math::identity<value_type>())
                         : dia * A.val[ja];
 
                     for(ptrdiff_t jp = P_tent->ptr[ca], ep = P_tent->ptr[ca+1]; jp < ep; ++jp) {
